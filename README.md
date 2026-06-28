@@ -36,10 +36,10 @@ pip install -r requirements.txt
 
 > If `requirements.txt` is not present, install from `pyproject.toml` or use `pip install chromadb google-genai google-generativeai pdfplumber python-dotenv rank-bm25 sentence-transformers streamlit torch torchvision`.
 
-3. Add your Gemini API key as an environment variable:
+3. Add your Gemini API key in .env file:
 
 ```bash
-set GEMINI_API_KEY=your_api_key
+GEMINI_API_KEY=your_api_key
 ```
 
 4. Ingest the syllabus PDF
