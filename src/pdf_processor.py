@@ -6,7 +6,11 @@ def read_pdf(pdf_path):
     text = ""
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
-            text += page.extract_text()
+            page_text = page.extract_text() or ""
+            if page_text:
+                if text:
+                    text += "\n\n"
+                text += page_text
     
     return text
         

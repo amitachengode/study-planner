@@ -24,13 +24,12 @@ class Agent:
     def ask(self, question: str, max_tokens: int = 10000) -> str:
         config = types.GenerateContentConfig(max_output_tokens=max_tokens)
         
-        # Loop through our model pool if we hit a 503 Server Error
-        while self.current_model_index < len(self.model_pool):
-            active_model = self.model_pool[self.current_model_index]
+        # Start each request with the preferred model and fall back only on high-demand errors.
+        current_index = 0
+        while current_index < len(self.model_pool):
+            self.current_model_index = current_index
+            self._init_chat_session()
             try:
-                # Update the underlying chat session target model dynamically
-                self.chat_session._model = active_model
-                
                 response = self.chat_session.send_message(
                     message=question,
                     config=config
@@ -38,14 +37,11 @@ class Agent:
                 return response.text
 
             except ServerError as e:
-                # 503 Service Unavailable / High Demand Spike
                 if e.code == 503:
-                    self.current_model_index += 1
-                    if self.current_model_index < len(self.model_pool):
-                        # Gracefully switch to the next model in the pool on the next loop iteration
+                    current_index += 1
+                    if current_index < len(self.model_pool):
                         continue
-                    else:
-                        return "❌ **All available Gemini models are currently experiencing high demand.** Please wait a moment and try again later."
+                    return "❌ **All available Gemini models are currently experiencing high demand.** Please wait a moment and try again later."
                 return f"❌ Gemini Server Error ({e.code}): {e.message}"
 
             except ClientError as e:

@@ -29,11 +29,9 @@ if "my_agent" not in st.session_state:
         "You are an expert academic assistant specializing in the KTU syllabus. "
         "Use the provided context chunks (retrieved via hybrid semantic and keyword search) "
         "to answer the user's questions accurately. If the context does not contain "
-        "the answer, state that clearly."
-        "if the context does not contain the answer, state that clearly."
-        "do not make up topics or topics that are not in the context."
-        "you may only use the information in the context to answer the question."
-        "you can browse about the topics in the context."
+        "the answer, state that clearly. "
+        "Do not make up topics that are not in the context. "
+        "Use only the information in the context to answer the question."
     )
     # Start with gemini-2.5-flash as default, falling back automatically if needed
     st.session_state.my_agent = Agent(
@@ -67,7 +65,7 @@ if user_query := st.chat_input("Ask a question about your syllabus..."):
 
     with st.chat_message("assistant"):
         with st.spinner("Formulating response..."):
-            response_text = st.session_state.my_agent.ask(augmented_prompt, max_tokens=2000)
+            response_text = st.session_state.my_agent.ask(augmented_prompt, max_tokens=8000)
             st.markdown(response_text)
             
     st.session_state.ui_messages.append({"role": "assistant", "content": response_text})
